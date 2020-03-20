@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="Default_language" translatable="false">EN</string>
+  <!-- connection -->
+  <string name="geonaute_account_creation_uri" translatable="false">%1$s/%2$s/newuser?lang=%3$s</string>
+  <string name="geonaute_login_uri" translatable="false">%1$s/oauth/authorize?client_id=%2$s&amp;lang=%3$s&amp;response_type=code&amp;redirect_uri=%4$s</string>
+  <string name="geonaute_login_step2_uri" translatable="false">%1$s/oauth/accessToken?client_id=%2$s&amp;redirect_uri=%3$s&amp;client_secret=%4$s&amp;grant_type=authorization_code&amp;</string>
+  <!-- Font types prefix used to retrieve fonts files-->
+  <string name="roboto" translatable="false">Roboto-</string>
+  <string name="robotoBlack" translatable="false">Roboto-Black</string>
+  <string name="robotoLight" translatable="false">Roboto-Light</string>
+  <string name="robotoThin" translatable="false">Roboto-Thin</string>
+  <string name="robotoMedium" translatable="false">Roboto-Medium</string>
+  <string name="robotoCondensed" translatable="false">RobotoCondensed-</string>
+  <string name="robotoCondensedLight" translatable="false">RobotoCondensed-Light</string>
+
+  <!-- Font suffix used to retrieve fonts files-->
+  <string name="bold" translatable="false">Bold</string>
+  <string name="italic" translatable="false">Italic</string>
+  <string name="boldItalic" translatable="false">BoldItalic</string>
+  <string name="regular" translatable="false">Regular</string>
+
+  <!--Bpm ranges-->
+  <integer-array name="bpmValuesRanges">
+    <item>80</item>
+    <item>110</item>
+    <item>140</item>
+    <item>180</item>
+  </integer-array>
+  
+  <!--Console equipment id linked to console type for calorie computation and [min,max] values -->
+  <!-- Bike consoles-->
+  <integer-array name="console3IdList">
+    <item>8363074</item>
+    <item>8369237</item>
+    <item>8368167</item>
+    <item>8369244</item>
+    <item>8368168</item>
+    <item>8369246</item>
+  </integer-array>
+
+  <integer-array name="console4IdList">
+    <item>8369247</item>
+    <item>8369248</item>
+  </integer-array>
+
+  <integer-array name="consoleNewDisplayIdList">
+    <item>2100001</item>
+    <item>2100002</item>
+    <item>2100003</item>
+    <item>2100004</item>
+  </integer-array>
+
+  <integer-array name="computedCalorie3v1IdList">
+    <item>8363074</item>
+    <item>8369237</item>
+    <item>8368168</item>
+    <item>8369246</item>
+  </integer-array>
+
+  <integer-array name="computedCalorie3v2IdList">
+    <item>8368167</item>
+    <item>8369244</item>
+  </integer-array>
+
+  <array name="torqueEquivalentsConsole3v1">
+    <item>0f</item>
+    <item>9f</item>
+    <item>9.5f</item>
+    <item>10.5f</item>
+    <item>11.5f</item>
+    <item>13.5f</item>
+    <item>15.5f</item>
+    <item>18f</item>
+    <item>21f</item>
+    <item>24f</item>
+    <item>28.5f</item>
+    <item>32f</item>
+    <item>36f</item>
+    <item>41f</item>
+    <item>44f</item>
+    <item>48f</item>
+  </array>
+
+  <array name="torqueEquivalentsConsole3v2">
+    <item>0f</item>
+    <item>7.5f</item>
+    <item>8.5f</item>
+    <item>9.5f</item>
+    <item>10f</item>
+    <item>11.5f</item>
+    <item>12f</item>
+    <item>14f</item>
+    <item>16f</item>
+    <item>18f</item>
+    <item>20f</item>
+    <item>22f</item>
+    <item>26f</item>
+    <item>29f</item>
+    <item>34f</item>
+    <item>44f</item>
+  </array>
+
+  <!-- Treadmill consoles -->
+  <integer-array name="treadmillConsole1IdList">
+    <item>8346893</item>
+    <item>8396836</item>
+    <item>84202</item>
+  </integer-array>
+
+  <integer-array name="treadmillConsole2IdList">
+    <item>8389706</item>
+    <item>8389707</item>
+  </integer-array>
+
+  <integer-array name="treadmillConsole3IdList">
+    <item>9000001</item>
+    <item>9000002</item>
+  </integer-array>
+
+  <integer-array name="treadmillConsole4IdList">
+    <item>5400001</item>
+    <item>5400002</item>
+  </integer-array>
+
+  <integer-array name="treadmillUnknownIdList">
+  </integer-array>
+
+  <integer-array name="treadmillSpecificZoneIdList">
+    <item>5400001</item>
+    <item>5400002</item>
+    <item>9000001</item>
+    <item>9000002</item>
+  </integer-array>
+
+  <integer-array name="treadmillComputedCalorieIdList">
+    <item>84202</item>
+    <item>8346893</item>
+    <item>8396836</item>
+  </integer-array>
+
+  <string name="speed_unit">公里/小时</string>
+  <string name="speed_imperial_unit">英里每小时</string>
+  <string name="distance_imperial_unit">英里</string>
+  <string name="distance_imperial_unit_lowercase">英里</string>
+</resources>

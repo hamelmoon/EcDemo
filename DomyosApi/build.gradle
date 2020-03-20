@@ -1,0 +1,23 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 28
+
+    defaultConfig {
+        minSdkVersion 18
+        targetSdkVersion 28
+    }
+
+    buildTypes {
+
+        release {
+            minifyEnabled false
+            //proguardFile '/Users/Andy/proguard-project.txt'
+        }
+    }
+}
+
+dependencies {
+    implementation project(':aDBluetooth')
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+}
