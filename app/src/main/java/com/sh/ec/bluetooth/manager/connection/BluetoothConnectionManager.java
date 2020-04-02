@@ -11,7 +11,10 @@ import com.sh.ec.bluetooth.common.BluetoothEquipmentConnectionState;
 import com.sh.ec.bluetooth.manager.BluetoothManager;
 import com.sh.ec.bluetooth.manager.BluetoothSpecificManager;
 import com.sh.ec.bluetooth.manager.ManagerEventListener;
+import com.sh.ec.event.EquipmentEvent;
 import com.sh.ec.utils.LogUtils;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.Collection;
 import java.util.Timer;
@@ -19,12 +22,12 @@ import java.util.TimerTask;
 
 
 public class BluetoothConnectionManager implements BluetoothSpecificManager, DCEquipmentManagerCallback {
-   private static final int SCAN_MAX_RETRY_COUNT = 5;
-   private static final int RECONNECT_MAX_RETRY_COUNT = 5;
+   private static final int SCAN_MAX_RETRY_COUNT = 1;
+   private static final int RECONNECT_MAX_RETRY_COUNT = 1;
    private static final int DEFAULT_CANCEL_CONNECTION_DELAY = 500;
-   private static final long DEFAULT_BLUETOOTH_TIMEOUT_ELAPSED_TIME = 25000;//DEFAULT_CANCEL_CONNECTION_DELAY before connection timeout
+   private static final long DEFAULT_BLUETOOTH_TIMEOUT_ELAPSED_TIME = 15000;//DEFAULT_CANCEL_CONNECTION_DELAY before connection timeout
    private static final long DEFAULT_BLUETOOTH_TIMEOUT_ELAPSED_TIME_WITH_EQUIPMENT_SEARCH = 30000;//DEFAULT_CANCEL_CONNECTION_DELAY before equipment availability search timeout
-   private static final int NOT_INITIALIZED_SCAN_RETRY_DELAY_VALUE = 1000;//time window to check whether the scan has been stopped or not for connection
+   private static final int NOT_INITIALIZED_SCAN_RETRY_DELAY_VALUE = 800;//time window to check whether the scan has been stopped or not for connection
    private static final int SCAN_DELAY_VALUE = 500;//used for scan retry count purpose
 
    private ManagerEventListener mListener;
@@ -108,8 +111,7 @@ public class BluetoothConnectionManager implements BluetoothSpecificManager, DCE
                LogUtils.d("BLUETOOTH MANAGER DOMYOS EQUIPMENT AVAILABLE CHECK : SUCCESS, TRY CONNECTION");
                //equipment still available
                verifyingEquipmentAvailable = false;
-               launchManagerConnection(equipmentConnectionTry.getName(),
-                   equipmentConnectionTry, true);
+               launchManagerConnection(equipmentConnectionTry.getName(), equipmentConnectionTry, true);
            }
        }
    }
@@ -150,13 +152,14 @@ public class BluetoothConnectionManager implements BluetoothSpecificManager, DCE
        } else {
            waitConnectionId = false;
            connectedEquipment = null;
+           EventBus.getDefault().post(new EquipmentEvent(EquipmentEvent.ACTION_EQUIPMENT_FAIL,"equipmentLost"));
+
            LogUtils.d(
                "BLUETOOTH MANAGER DOMYOS DID DISCONNECT EQUIPMENT : UNWANTED REJECTION BY EQUIPMENT OR SDK");
 
            if(BluetoothManager.isBluetoothPhoneEnabled() && reConnectionRetryCount>0){
                reConnectionRetryCount--;
-               launchManagerConnection(equipmentConnectionTry.getName(),
-                   equipmentConnectionTry, true);
+               launchManagerConnection(equipmentConnectionTry.getName(), equipmentConnectionTry, true);
            }else {
                bluetoothConnectionState = BluetoothConnectionState.REJECTED_BY_EQUIPMENT;
                notifyManager();
@@ -256,9 +259,7 @@ public class BluetoothConnectionManager implements BluetoothSpecificManager, DCE
                retryScanTimer.schedule(new TimerTask() {
                    @Override public void run() {
                        if (notInitializedScanRetryCount <= SCAN_MAX_RETRY_COUNT) {
-                           Log.e(
-                               "BLUETOOTH",
-                               notInitializedScanRetryCount+"-----"+ SCAN_MAX_RETRY_COUNT);
+                           Log.e("BLUETOOTH", notInitializedScanRetryCount+"-----"+ SCAN_MAX_RETRY_COUNT);
                            notInitializedScanRetryCount++;
                            startScan();
                        } else {
@@ -339,8 +340,7 @@ public class BluetoothConnectionManager implements BluetoothSpecificManager, DCE
            DCEquipment[] equipments = new DCEquipment[dcEquipmentManager.getEquipments().size()];
            dcEquipmentManager.getEquipments().toArray(equipments);
            //connect to the first equipment retrieved by default or to the given one
-           if ((equipmentName == null || equipmentName.equals(""))
-               && dcEquipmentManager.getEquipments().size() > 0) {
+           if ((equipmentName == null || equipmentName.equals("")) && dcEquipmentManager.getEquipments().size() > 0) {
                LogUtils.d("BLUETOOTH MANAGER DOMYOS CONNECTION TRY EMPTY OR NULL EQUIPMENT NAME : CONNECTING FIRST EQUIPMENT SEEN");
                launchManagerConnection(equipments[0].getName(), equipments[0], false);
            } else {
@@ -522,6 +522,7 @@ public class BluetoothConnectionManager implements BluetoothSpecificManager, DCE
                //enable connection again
                waitResponse = false;
                verifyingEquipmentAvailable = false;
+
                LogUtils.d(
                    "BLUETOOTH MANAGER DOMYOS TIMEOUT REACHED, RELEASING LOCKS ...");
                //equipment still not connected and no response, notify timeout and clear connection try
@@ -530,6 +531,7 @@ public class BluetoothConnectionManager implements BluetoothSpecificManager, DCE
                    LogUtils.d(
                        "BLUETOOTH MANAGER DOMYOS TIMEOUT REACHED, CANCELLING CONNECTION REQUEST ...");
                    cancelPreviousConnection();
+
                    bluetoothConnectionState = BluetoothConnectionState.TIME_OUT;
                    notifyManager();
                }
@@ -580,9 +582,9 @@ public class BluetoothConnectionManager implements BluetoothSpecificManager, DCE
     * Function used to know if a connection can be launched
     */
    private boolean canConnectEquipment() {
-       return dcEquipmentManager.getInitializationState() && (connectedEquipment == null
-           || connectedEquipment.getConnectionState()
-           == DCEquipment.DCEquipmentConnectionStateDisconnected) && isNotProcessingCall();
+       return dcEquipmentManager.getInitializationState()
+               && (connectedEquipment == null || connectedEquipment.getConnectionState() == DCEquipment.DCEquipmentConnectionStateDisconnected)
+               && isNotProcessingCall();
    }
 
    private synchronized void purgeTimeoutTimerIfAny(){

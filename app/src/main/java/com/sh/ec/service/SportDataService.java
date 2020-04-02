@@ -1,7 +1,9 @@
 package com.sh.ec.service;
 
 
+import android.app.Notification;
 import android.app.Service;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
@@ -9,12 +11,15 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import com.appdevice.domyos.DCBike;
+import com.appdevice.domyos.DCCompletionBlockWithError;
 import com.appdevice.domyos.DCEquipment;
+import com.appdevice.domyos.DCEquipmentInfo;
 import com.appdevice.domyos.DCEquipmentManager;
+import com.appdevice.domyos.DCError;
+import com.appdevice.domyos.DCTreadmill;
 import com.sh.ec.bluetooth.manager.BluetoothManager;
 import com.sh.ec.bluetooth.manager.connection.BluetoothConnectionManager;
-import com.sh.ec.entity.PauseCauseEnum;
-import com.sh.ec.event.CommonEvent;
 import com.sh.ec.event.EquipmentEvent;
 
 import org.greenrobot.eventbus.EventBus;
@@ -25,8 +30,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 //处理蓝牙
 public class SportDataService extends Service {
@@ -39,12 +42,15 @@ public class SportDataService extends Service {
     int reconnectCount = 0;
     private static BluetoothConnectionManager bluetoothConnectionManager;
     private static BluetoothManager manager;
+    public static int equipmentId;
+    public static float equipmentVersion;
 
     @Override
     public void onCreate() {
         super.onCreate();
         EventBus.getDefault().register(this);
         initListener();
+
     }
 
     @Nullable
@@ -101,6 +107,7 @@ public class SportDataService extends Service {
                 }
             }
 
+
             @Override
             public void equipmentManagerDidConnectEquipment(DCEquipment equipment) {
                 Log.e(TAG, "CallBack-------equipmentManagerDidConnectEquipment");
@@ -108,10 +115,42 @@ public class SportDataService extends Service {
                 mConnectedEquipment = null;
                 isEquipmentConnected = true;
                 mEquipment = equipment;
-                EventBus.getDefault().post(new EquipmentEvent(EquipmentEvent.ACTION_EQUIPMENT_CONNECTED, equipment));
+
+                DCBike treadmill = (DCBike) equipment;
+
+                treadmill.getEquipmentID(new DCEquipment.DCGetEquipmentIDCompletionBlock() {
+                    @Override
+                    public void completed(DCEquipment equipment, String ID) {
+                        Log.e("equipmentID", "-------------" + ID);
+                        equipmentId = Integer.valueOf(ID);
+                    }
+                }, new DCCompletionBlockWithError() {
+                    @Override
+                    public void completedWithError(DCEquipment equipment, DCError error) {
+                        Log.e("equipmentID", "-------------" + error.getDescription());
+
+                    }
+                });
+
+                treadmill.getEquipmentInfo(new DCBike.DCBikeGetEquipmentInfoCompletionBlock() {
+                    @Override
+                    public void completed(DCEquipment equipment, DCEquipmentInfo consoleEquipmentInfo) {
+                        equipmentVersion = consoleEquipmentInfo.getFirmwareVersion();
+                        EventBus.getDefault().post(new EquipmentEvent(EquipmentEvent.ACTION_EQUIPMENT_CONNECTED, equipment));
+
+                    }
+                }, new DCCompletionBlockWithError() {
+                    @Override
+                    public void completedWithError(DCEquipment equipment, DCError error) {
+
+                    }
+                });
+
+
                 bluetoothConnectionManager = new BluetoothConnectionManager(DCEquipmentManager.getInstance(), SportDataService.this);
                 manager = new BluetoothManager(bluetoothConnectionManager);
                 manager.initializeSpecificEquipmentManager(mEquipment, true);
+
             }
         });
     }
@@ -151,6 +190,10 @@ public class SportDataService extends Service {
 
     }
 
+    @Override
+    public ComponentName startForegroundService(Intent service) {
+        return super.startForegroundService(service);
+    }
 
     public static DCEquipment getEquipment() {
         if (mEquipment != null) {
@@ -192,7 +235,7 @@ public class SportDataService extends Service {
         switch (event.action) {
             case EquipmentEvent.ACTION_QUICK_START:
                 getStart();
-              //  Log.e(TAG, "------ACTION_QUICK_START-------"+  manager.getEquipmentInfo());
+                //  Log.e(TAG, "------ACTION_QUICK_START-------"+  manager.getEquipmentInfo());
                 break;
             case EquipmentEvent.ACTION_PROGRAM_START:
                 break;
@@ -206,10 +249,10 @@ public class SportDataService extends Service {
 
                 getStop();
                 break;
-            case EquipmentEvent.ACTION_RESATART:
+            case EquipmentEvent.ACTION_RESTART:
                 // manager.stopProgram();
-                manager.setSpeedCmd(4f);
-                manager.setResistance(1f);
+                manager.setSpeedCmd(event.last_speed);
+                manager.setResistance(event.last_incline);
                 manager.startProgram();
 
 
@@ -224,5 +267,14 @@ public class SportDataService extends Service {
         stopScan();
         EventBus.getDefault().unregister(this);
         super.onDestroy();
+    }
+
+
+    public void cancelEquipment() {
+        if (BluetoothManager.isBluetoothPhoneEnabled()
+                && DCEquipmentManager.getInstance().getInitializationState()) {
+            DCEquipmentManager.getInstance().cancelEquipmentConnection(mEquipment);
+
+        }
     }
 }

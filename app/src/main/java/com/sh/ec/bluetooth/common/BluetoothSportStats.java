@@ -16,6 +16,15 @@ public class BluetoothSportStats {
   private float kcalPerHour = 0;
   private int currentCumulativeCount = 0;
   private int timePer500M = 0;
+  private float watt;
+
+  public float getWatt() {
+    return watt;
+  }
+
+  public void setWatt(float watt) {
+    this.watt = watt;
+  }
 
   public int getTimePer500M() {
     return timePer500M;

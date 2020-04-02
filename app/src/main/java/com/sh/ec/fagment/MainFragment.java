@@ -1,5 +1,7 @@
 package com.sh.ec.fagment;
 
+import android.util.Log;
+
 import com.sh.ec.BaseFragment;
 import com.sh.ec.R;
 import com.sh.ec.event.DeviceEvent;
@@ -28,10 +30,13 @@ public class MainFragment extends BaseFragment {
     public void changeUI(DeviceEvent event){
         switch (event.action){
             case DeviceEvent.ACTION_SEARCH:
-                getChildFragmentManager().beginTransaction().replace(R.id.fragment_layout_container,new SearchFragment()).commit();
+                getChildFragmentManager().beginTransaction().replace(R.id.fragment_layout_container,new SearchDemoFragment()).commit();
                 break;
             case DeviceEvent.ACTION_RUNNING:
-                if (mode==1) {
+
+                //if (mode==1) {
+                if (event.mode==1) {
+
                     getChildFragmentManager().beginTransaction().replace(R.id.fragment_layout_container, new RunningFragment()).commit();
                 }
                 break;

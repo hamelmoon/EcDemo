@@ -27,6 +27,7 @@ import com.sh.ec.entity.EquipmentInfo;
 import com.sh.ec.entity.PauseCauseEnum;
 import com.sh.ec.event.EquipmentEvent;
 import com.sh.ec.event.SportDataChangeEvent;
+import com.sh.ec.service.SportDataService;
 import com.sh.ec.utils.LogUtils;
 import com.zhy.autolayout.utils.L;
 
@@ -56,9 +57,6 @@ import static com.sh.ec.entity.PauseCauseEnum.USER_REQUEST_START;
 public class BluetoothTreadmillManager
         implements TreadmillListener, BluetoothEquipmentSpecificManager {
     public static final int MAX_SLOPE_VALUE = 22;
-
-
-
 
     public static final int[] console1IdList =
             AppContext.getInstance().getResources().getIntArray(R.array.treadmillConsole1IdList);
@@ -94,8 +92,8 @@ public class BluetoothTreadmillManager
     public static BluetoothSportStats bluetoothSportStats = new BluetoothSportStats();
     private ManagerEventListener mListener;
     private float weight = 0;
-    private float equipmentVersion = -1;
-    private Integer equipmentID;
+    private static float equipmentVersion = -1;
+    private static Integer equipmentID;
 
     private int speedMax = DEFAULT_EQUIPMENT_INFO_MAX_VALUE;
     private int inclineMax = DEFAULT_EQUIPMENT_INFO_MAX_VALUE;
@@ -233,19 +231,10 @@ public class BluetoothTreadmillManager
         equipmentInfo.setMinInclinePercentage(DEFAULT_EQUIPMENT_INFO_MIN_VALUE);
         Timber.i("BLUETOOTH MANAGER DOMYOS ASK EQUIPMENT ID");
         if (isConnected(treadmill)) {
-            treadmill.getEquipmentID(new DCEquipment.DCGetEquipmentIDCompletionBlock() {
-                @Override
-                public void completed(DCEquipment equipment, String equipmentID) {
-                    Log.e("equipmentID","-------------"+equipmentID);
-                }
-            }, new DCCompletionBlockWithError() {
-                @Override
-                public void completedWithError(DCEquipment equipment, DCError error) {
-                    Log.e("equipmentID","-------------"+error.getDescription());
 
-                }
-            });
             treadmill.getEquipmentID((dcEquipment, s) -> onIdReceived(s, clearData), idErrorBlock);
+            //equipmentID = SportDataService.equipmentId;
+            //equipmentVersion = SportDataService.equipmentVersion;
         }
     }
 
@@ -261,6 +250,8 @@ public class BluetoothTreadmillManager
         //Get equipment version number
         Timber.i("BLUETOOTH MANAGER DOMYOS ASK EQUIPMENT INFO ...");
         if (isConnected(treadmill)) {
+            LogUtils.e("================0====================");
+
             treadmill.getEquipmentInfo((dcTreadmill, dcEquipmentInfo, dcEquipmentInfo1) -> onEquipmentInfoReceived(s,
                     dcEquipmentInfo, clearData), (dcEquipment, dcError) -> Timber.i(
                     "BLUETOOTH MANAGER DOMYOS ASK EQUIPMENT INFO ...--------> ERROR"));
@@ -274,8 +265,12 @@ public class BluetoothTreadmillManager
         if (equipmentID == 84202) {
             equipmentID = 8396836;
             mListener.onEquipmentIdReceived(String.valueOf(equipmentID));
+            LogUtils.e("================1====================");
+
         } else {
             mListener.onEquipmentIdReceived(s);
+            LogUtils.e("================2====================");
+
         }
 
         initializeMaxAndButtonsValues(equipmentID);
@@ -292,6 +287,8 @@ public class BluetoothTreadmillManager
             }
         }
         if (mListener != null) {
+            LogUtils.e("================3====================");
+
             mListener.onEquipmentInfoReceived(equipmentInfo);
         }
 
@@ -305,14 +302,14 @@ public class BluetoothTreadmillManager
                         (dcEquipment, dcError) -> Timber.i(
                                 "BLUETOOTH MANAGER DOMYOS SESSION DATA CLEAR --------> ERROR"));
             }
-            initDisplay();
+            initDisplay(true);
         } else {
             Timber.i("BLUETOOTH MANAGER RECOVERY OF SESSION ASKING START");
             isSafetyEnabled = treadmill.getSafetyMotorKey();
             pauseClicked(SESSION_START);
             speedObjective = bluetoothSportStats.getSpeedKmPerHour();
             inclineObjective = bluetoothSportStats.getInclinePercentage();
-            initDisplay();
+            initDisplay(false);
             setSpeedCmd(speedObjective);
             setResistance(inclineObjective);
         }
@@ -381,7 +378,7 @@ public class BluetoothTreadmillManager
         } else {
             pauseClicked(TAB_NOT_DETECTED);
         }
-        initDisplay();
+        initDisplay(false);
     }
 
     @Override
@@ -400,13 +397,53 @@ public class BluetoothTreadmillManager
         return started;
     }
 
-    private void initDisplay() {
+    private void initDisplay(boolean initDisplay) {
         displayBluetoothIcon();
-        BluetoothEquipmentConsoleUtils.initConsoleDisplay(TypeConstants.TYPE_SPORT_TREADMILL,
+        /*BluetoothEquipmentConsoleUtils.initConsoleDisplay(TypeConstants.TYPE_SPORT_TREADMILL,
                 treadmill, equipmentID, equipmentVersion, started, dcEquipment -> Timber.i(
                         "BLUETOOTH MANAGER SEND DISPLAY FROM INIT DISPLAY 1 --------> success"),
                 (dcEquipment, dcError) -> Timber.i(
                         "BLUETOOTH MANAGER SEND DISPLAY FROM INIT DISPLAY 1 --------> ERROR"), true, 0, 0);
+      */
+        BluetoothEquipmentConsoleUtils.displayMainMessage(TypeConstants.TYPE_SPORT_TREADMILL,
+                treadmill, equipmentID, equipmentVersion, started, dcEquipment -> Timber.i(
+                        "BLUETOOTH MANAGER SEND DISPLAY FROM INIT DISPLAY 1 --------> success"),
+                (dcEquipment, dcError) -> Timber.i(
+                        "BLUETOOTH MANAGER SEND DISPLAY FROM INIT DISPLAY 1 --------> ERROR"));
+        BluetoothEquipmentConsoleUtils.initializeZoneInformations(
+                TypeConstants.TYPE_SPORT_TREADMILL, treadmill, equipmentID, equipmentVersion, started,
+                0, dcEquipment -> Timber.i(
+                        "BLUETOOTH MANAGER SEND DISPLAY FROM INIT DISPLAY 2 --------> success"),
+                (dcEquipment, dcError) -> Timber.i(
+                        "BLUETOOTH MANAGER SEND DISPLAY FROM INIT DISPLAY 2 --------> ERROR"));
+        if (!initDisplay) {
+            BluetoothEquipmentConsoleUtils.displayZoneInformation(
+                    TypeConstants.TYPE_SPORT_TREADMILL, treadmill, equipmentID, equipmentVersion,
+                    DCUnit.CURRENT_HEART_RATE, started, 0, dcEquipment -> Timber.i(
+                            "BLUETOOTH MANAGER SEND DISPLAY FROM INIT DISPLAY 3 --------> success"),
+                    (dcEquipment, dcError) -> Timber.i(
+                            "BLUETOOTH MANAGER SEND DISPLAY FROM INIT DISPLAY 3 --------> ERROR"));
+            BluetoothEquipmentConsoleUtils.displayZoneInformation(
+                    TypeConstants.TYPE_SPORT_TREADMILL, treadmill, equipmentID, equipmentVersion,
+                    DCUnit.SLOPE_DEVICE, started, 0, dcEquipment -> Timber.i(
+                            "BLUETOOTH MANAGER SEND DISPLAY FROM INIT DISPLAY 4 --------> success"),
+                    (dcEquipment, dcError) -> Timber.i(
+                            "BLUETOOTH MANAGER SEND DISPLAY FROM INIT DISPLAY 4 --------> ERROR"));
+            BluetoothEquipmentConsoleUtils.displayZoneInformation(
+                    TypeConstants.TYPE_SPORT_TREADMILL, treadmill, equipmentID, equipmentVersion,
+                    DCUnit.DISTANCE, started, 0, dcEquipment -> Timber.i(
+                            "BLUETOOTH MANAGER SEND DISPLAY FROM INIT DISPLAY 5 --------> success"),
+                    (dcEquipment, dcError) -> Timber.i(
+                            "BLUETOOTH MANAGER SEND DISPLAY FROM INIT DISPLAY 5 --------> ERROR"));
+            BluetoothEquipmentConsoleUtils.displayZoneInformation(
+                    TypeConstants.TYPE_SPORT_TREADMILL, treadmill, equipmentID, equipmentVersion,
+                    DCUnit.KCAL_BURNT, started, 0, dcEquipment -> Timber.i(
+                            "BLUETOOTH MANAGER SEND DISPLAY FROM INIT DISPLAY 5 --------> success"),
+                    (dcEquipment, dcError) -> Timber.i(
+                            "BLUETOOTH MANAGER SEND DISPLAY FROM INIT DISPLAY 5 --------> ERROR"));
+        }
+
+
     }
 
     /**
@@ -439,6 +476,8 @@ public class BluetoothTreadmillManager
      * Change incline percentage and display it on console
      */
     private void setInclinePercentage(float inclinePercentage) {
+        Log.d("sh123","-------------setInclinePercentage------------------inclinePercentage =="+inclinePercentage);
+
         infoParams.setTargetInclinePercentage(inclinePercentage);
         sendWorkoutInfoParamsToEquipment(infoParams);
         BluetoothEquipmentConsoleUtils.displayZoneInformation(TypeConstants.TYPE_SPORT_TREADMILL,
@@ -636,11 +675,11 @@ public class BluetoothTreadmillManager
     /**
      * Send values to the treadmill console
      */
-    private void sendWorkoutInfoParamsToEquipment(
-            DCTreadmillWorkoutModeSetInfoParameters infoParams) {
+    private void sendWorkoutInfoParamsToEquipment(DCTreadmillWorkoutModeSetInfoParameters infoParams) {
         if (isConnected(treadmill)) {
-            treadmill.setWorkoutModeInfoValue(infoParams, dcEquipment -> Timber.i(
-                    "BLUETOOTH MANAGER SEND INFO PARAMS (speed, incline, bluetooth icon ...) --------> success"),
+
+            treadmill.setWorkoutModeInfoValue(infoParams, dcEquipment ->
+                    Log.d("sh123","-------------sendWorkoutInfoParamsToEquipment--------------infoParams----"),
                     (dcEquipment, dcError) -> Timber.i(
                             "BLUETOOTH MANAGER SEND INFO PARAMS (speed, incline, bluetooth icon ...) --------> ERROR"));
         }
@@ -846,11 +885,11 @@ public class BluetoothTreadmillManager
     @Override
     public void onCurrentSessionAverageSpeedChanged(float v) {
         Log.e("Manger","onCurrentSessionAverageSpeedChanged --------> success=="+v);
-        Intent intentRunAr = new Intent("com.domyos.econnected.SEND_SPEED");
+       /* Intent intentRunAr = new Intent("com.domyos.econnected.SEND_SPEED");
         Bundle bundleRunAr = new Bundle();
         bundleRunAr.putFloat("avg_speed", v);
         intentRunAr.putExtras(bundleRunAr);
-        AppContext.getInstance().sendBroadcast(intentRunAr);
+        AppContext.getInstance().sendBroadcast(intentRunAr);*/
         bluetoothSportStats.setSessionAverageSpeedChanged(v);
         EventBus.getDefault().post(new SportDataChangeEvent(SportDataChangeEvent.ACTION_AVG_SPEED,bluetoothSportStats));
 
@@ -909,6 +948,8 @@ public class BluetoothTreadmillManager
 
     @Override
     public void clearSessionData() {
+        setHotKey(DCTreadmill.DCHotKeyStart);
+        Log.d("sh123","-------------clearSessionData------------------");
         speedObjective = DEFAULT_EQUIPMENT_INFO_MIN_SPEED_VALUE;
         inclineObjective = DEFAULT_EQUIPMENT_INFO_MIN_VALUE;
         setSpeedCmd(DEFAULT_EQUIPMENT_INFO_MIN_SPEED_VALUE);
@@ -933,14 +974,22 @@ public class BluetoothTreadmillManager
 
     @Override
     public void setResistance(float value) {
+        Log.d("sh123","-------------setResistance------------------"+value);
+
         inclineObjective = value;
         if (inclineObjective > DEFAULT_EQUIPMENT_INFO_MIN_VALUE && inclineObjective < inclineMax) {
+            Log.d("sh123","-------------inclineObjective----------111--------"+inclineObjective);
+
             setInclinePercentage(inclineObjective);
         }
 
         if (inclineObjective <= DEFAULT_EQUIPMENT_INFO_MIN_VALUE) {
+            Log.d("sh123","-------------inclineObjective------------222------"+inclineObjective);
+
             inclineObjective = DEFAULT_EQUIPMENT_INFO_MIN_VALUE;
             setInclinePercentage(DEFAULT_EQUIPMENT_INFO_MIN_VALUE);
+            Log.d("sh123","-------------inclineObjective-------333-----------"+inclineObjective);
+
         }
 
         if (inclineObjective >= inclineMax) {

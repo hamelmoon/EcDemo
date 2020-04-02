@@ -11,16 +11,28 @@ import java.util.List;
 
 public class EquipmentEvent {
     public int action;
+    public float last_speed;
+    public float last_incline;
     public EquipmentInfo equipmentInfo;
     public DCEquipment ewEquipment;
     public DCTreadmillSportData treadmillSportData;
     public DCBikeSportData bikeSportData;
     public List<DCEquipment> equipments;
+    public String msg;
     
     public EquipmentEvent(int action) {
         this.action = action;
     }
+    public EquipmentEvent(int action,String msg) {
+        this.action = action;
+        this.msg = msg;
+    }
 
+    public EquipmentEvent(int action, float last_speed, float last_incline) {
+        this.action = action;
+        this.last_speed = last_speed;
+        this.last_incline = last_incline;
+    }
 
     public EquipmentEvent(int action, List<DCEquipment> equipments) {
         this.action = action;
@@ -58,8 +70,8 @@ public class EquipmentEvent {
     public static final int ACTION_PROGRAM_START = 107;
     public static final int ACTION_STOP = 108;
     public static final int ACTION_PAUSE = 109;
-    public static final int ACTION_RESATART = 110;
-
+    public static final int ACTION_RESTART = 110;
+    public static final int ACTION_EQUIPMENT_FAIL = 111;
 
     
 }

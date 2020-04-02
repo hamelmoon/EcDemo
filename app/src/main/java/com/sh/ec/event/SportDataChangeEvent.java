@@ -22,5 +22,6 @@ public class SportDataChangeEvent {
     public static final int ACTION_RESISTANCE = 127;
     public static final int ACTION_INCLINE = 128;
     public static final int ACTION_TIME_PER_500 = 129;
+    public static final int ACTION_WATT= 130;
 
 }

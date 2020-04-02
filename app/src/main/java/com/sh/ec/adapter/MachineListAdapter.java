@@ -5,6 +5,8 @@ import android.content.Context;
 import android.graphics.Color;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
+
 import com.appdevice.domyos.DCEquipment;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
@@ -26,6 +28,13 @@ public class MachineListAdapter extends BaseQuickAdapter<DCEquipment, BaseViewHo
 
     public void setSelectedPosition(int position) {
         selectedPosition = position;
+        connected = -1;
+    }
+    public static int connected = -1;// 选中的位置
+
+    public void setConnectedPosition(int connectedPosition) {
+        selectedPosition = -1;
+        connected = connectedPosition;
     }
 
     public MachineListAdapter(List<DCEquipment> list) {
@@ -36,7 +45,6 @@ public class MachineListAdapter extends BaseQuickAdapter<DCEquipment, BaseViewHo
     @Override
     protected void convert(@NotNull BaseViewHolder holder, DCEquipment dcEquipment) {
         String name = dcEquipment.getName();
-        Log.e("Machine", "deviceName:  " + name);
         if (name.contains(BIKE)) {
             holder.setText(R.id.machine_list_type, getContext().getString(R.string.bike_txt));
             holder.setImageResource(R.id.machine_list_img,R.mipmap.icon_equipment_bike);
@@ -56,10 +64,25 @@ public class MachineListAdapter extends BaseQuickAdapter<DCEquipment, BaseViewHo
         holder.setText(R.id.machine_list_name,name);
 
         if (holder.getPosition()==selectedPosition ) {
-            holder.itemView.setBackgroundColor(getContext().getColor(R.color.button_color_select));
+            
+            holder.getView(R.id.loading).setVisibility(View.VISIBLE);
+            holder.getView(R.id.machine_list_connect).setVisibility(View.GONE);
         } else {
-            holder.itemView.setBackgroundColor(Color.WHITE);
+            holder.getView(R.id.loading).setVisibility(View.GONE);
+            holder.getView(R.id.machine_list_connect).setVisibility(View.VISIBLE);
+            holder.setImageDrawable(R.id.machine_list_connect,getContext().getDrawable(R.mipmap.icon_bluetooth_off));
+
         }
+
+        if (holder.getPosition()==connected){
+            holder.getView(R.id.loading).setVisibility(View.GONE);
+            holder.setImageDrawable(R.id.machine_list_connect,getContext().getDrawable(R.mipmap.icon_bluetooth_on));
+        }else {
+            holder.setImageDrawable(R.id.machine_list_connect,getContext().getDrawable(R.mipmap.icon_bluetooth_off));
+        }
+
+
+
 
     }
 

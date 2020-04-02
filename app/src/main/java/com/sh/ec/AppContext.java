@@ -47,13 +47,10 @@ public class AppContext extends Application {
         super.onCreate();
         appContext = this;
         Utils.init(this);
-        initService();
+
     }
 
-    private void initService() {
-        Intent intent = new Intent(this, SportDataService.class);
-        startService(intent);
-    }
+
 
     
 

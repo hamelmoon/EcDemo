@@ -95,7 +95,13 @@
                 android:text="平均心率"
                 />
 
-
+            <TextView
+                android:padding="5dp"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:text="瓦特"/>
 
 
 
@@ -191,7 +197,15 @@
                 android:text="平均心率"
                 android:id="@+id/end_avg_heart"
                 />
-
+            <TextView
+                android:padding="5dp"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:text="瓦特"
+                android:id="@+id/end_watt"
+                />
 
 
 

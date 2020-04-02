@@ -3,6 +3,7 @@ package com.sh.ec.fagment;
 import android.app.ProgressDialog;
 import android.util.Log;
 
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,6 +17,7 @@ import com.sh.ec.entity.DeviceData;
 import com.sh.ec.event.DeviceEvent;
 import com.sh.ec.event.EquipmentEvent;
 import com.sh.ec.service.SportDataService;
+import com.sh.ec.service.SportDataServiceDemo;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -26,6 +28,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 
@@ -43,7 +47,7 @@ public class SearchFragment extends BaseFragment {
     private DCEquipment equipment;
 
     SportDataService service;
-
+    //SportDataServiceDemo service;
     @Override
     protected int getRootViewLayoutId() {
         return R.layout.fragment_search;
@@ -51,11 +55,23 @@ public class SearchFragment extends BaseFragment {
 
     @Override
     protected void initSomething() {
+
         mProgressDialog = new ProgressDialog(getActivity());
         mProgressDialog.setMessage("searching...");
         mProgressDialog.show();
         service = new SportDataService();
-        service.scan(getActivity());
+        //service = new SportDataServiceDemo();
+
+
+        Timer timer = new Timer();
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                service.scan(getActivity());
+            }
+        };
+        timer.schedule(timerTask,1000);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
     }
@@ -88,17 +104,23 @@ public class SearchFragment extends BaseFragment {
             machineListAdapter.setSelectedPosition(position);
             machineListAdapter.notifyDataSetChanged();
             service.connectEquipment(equipment);
+
+
         });
     }
 
     public void removeFragment() {
-        EventBus.getDefault().post(new DeviceEvent(DeviceEvent.ACTION_COUNT, 1));
+        if(mProgressDialog!=null|mProgressDialog.isShowing()){
+            mProgressDialog.cancel();
+            mProgressDialog = null;
+        }
+        EventBus.getDefault().post(new DeviceEvent(DeviceEvent.ACTION_RUNNING, 1));
         getFragmentManager().beginTransaction().remove(this).commitAllowingStateLoss();
     }
 
     @Override
     public void onDestroyView() {
-        if (mProgressDialog.isShowing()) {
+        if (mProgressDialog!=null&&mProgressDialog.isShowing()) {
             mProgressDialog.dismiss();
         }
         if (DCEquipmentManager.getInstance().isScanning())
@@ -108,7 +130,7 @@ public class SearchFragment extends BaseFragment {
 
     @Override
     public void onDestroy() {
-        if (mProgressDialog.isShowing()) {
+        if (mProgressDialog!=null&&mProgressDialog.isShowing()) {
             mProgressDialog.dismiss();
         }
         super.onDestroy();

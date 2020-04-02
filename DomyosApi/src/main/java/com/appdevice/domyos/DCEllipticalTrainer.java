@@ -103,6 +103,7 @@ public class DCEllipticalTrainer extends DCEquipment {
                     setFanSpeedLevel(fanSpeedLevel);
                     setHotKeyStatus(hotKeyStatus);
                 } else {
+
                     int incline = (int) info.get("incline");
                     mEllipticalTrainerSportData.setmIncline(incline);
                 }

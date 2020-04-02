@@ -2,6 +2,7 @@ package com.sh.ec.bluetooth.manager;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
+import android.util.Log;
 
 import com.appdevice.domyos.DCBike;
 import com.appdevice.domyos.DCEllipticalTrainer;
@@ -21,7 +22,10 @@ import com.sh.ec.bluetooth.manager.utils.ErrorUtils;
 import com.sh.ec.bluetooth.manager.utils.TypeConstants;
 import com.sh.ec.entity.EquipmentInfo;
 import com.sh.ec.entity.PauseCauseEnum;
+import com.sh.ec.event.EquipmentEvent;
 import com.sh.ec.utils.DomyosException;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -161,6 +165,7 @@ public class BluetoothManager
     public Observable<EquipmentPauseState> pause() {
         if (specificEquipmentManager != null) {
             specificEquipmentManager.pauseClicked(PauseCauseEnum.USER_REQUEST_PAUSE);
+            specificEquipmentManager.setResistance(3);
         } else {
             errorHandling(EQUIPMENT_DISCONNECTED_ERROR_CODE);
         }
@@ -394,7 +399,11 @@ public class BluetoothManager
     @Override
     public void onEquipmentInfoReceived(EquipmentInfo equipmentInfo) {
         //notify equipment info received (equipment version, serial number, modelId, max possible values...)
+        //   EventBus.getDefault().post(new EquipmentEvent(EquipmentEvent.ACTION_EQUIPMENT_CONNECTED, equipment));
+
         dcEquipmentInfoPublishSubject.onNext(equipmentInfo);
+        Log.e("12345","------onEquipmentInfoReceived-------"+equipmentInfo.getSerialNumber()+"------------");
+
     }
 
     @Override
@@ -412,6 +421,7 @@ public class BluetoothManager
             }
             //notify of a scan list change
             dcScanPublishSubject.onNext(equipmentsDiscovered);
+            Log.e("12345","------onEquipmentDiscovered-------"+equipmentsDiscovered.size()+"------------");
         }
     }
 
@@ -428,7 +438,11 @@ public class BluetoothManager
             //lastUsedEquimentType.set((TypeConstants.getEquipmentType(connectedEquipment)<0)? TypeConstants.TYPE_SPORT_ELLIPTIC:TypeConstants.getEquipmentType(connectedEquipment));
             //Store the selected equipment for display order purpose
             selectedEquipment = connectedEquipment.getName();
+            Log.e("12345","------onEquipmentConnected-------oldConnectedEquipment != null------------");
+
         } else {
+            Log.e("12345","------onEquipmentConnected-------oldConnectedEquipment == null------------");
+
             initializeSpecificEquipmentManager(connectedEquipment, false);
         }
 
@@ -438,12 +452,16 @@ public class BluetoothManager
     @Override
     public void onEquipmentSearch(DCEquipment selectedEquipment) {
         //first step of connection event, we notify to refresh display
+        Log.e("12345","------onEquipmentSearch------"+Collections.singletonList(selectedEquipment).size()+"------------");
+
         dcScanPublishSubject.onNext(Collections.singletonList(selectedEquipment));
     }
 
     @Override
     public void onEquipmentDisconnected() {
         //Créer exception a remonter (regarder onError)
+        Log.e("12345","------onEquipmentDisconnected------------------");
+
         if (specificEquipmentManager != null) {
             Timber.i("Equipment disconnected%s", specificEquipmentManager.getEquipmentInfo());
         }

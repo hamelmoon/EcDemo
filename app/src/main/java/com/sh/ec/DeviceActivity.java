@@ -3,6 +3,7 @@ package com.sh.ec;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
@@ -15,7 +16,10 @@ import androidx.core.content.ContextCompat;
 
 import com.sh.ec.event.CommonEvent;
 import com.sh.ec.fagment.MainFragment;
+import com.sh.ec.service.MangerService;
 import com.sh.ec.service.SportDataService;
+import com.sh.ec.service.SportDataServiceDemo;
+import com.sh.ec.utils.SharedPreferenceUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -45,9 +49,26 @@ public class DeviceActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        initService();
+
+    }
+
+    Intent intent;
+    private void initService() {
+        //intent = new Intent(this, SportDataService.class);
+       intent = new Intent(this, MangerService.class);
+
+        startService(intent);
+    }
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+        stopService(intent);
+        SharedPreferenceUtils.put(this, "isConnected", "");
+
 
     }
     /**

@@ -130,6 +130,10 @@ public class DCGetInfoValueCommand extends DCCommand {
             int hotKeyStatus = byteBuffer.get() & 0xff;
 
             map = new HashMap<String, Object>();
+
+            Log.e("sh_test","DCGetInfoValueCommand=====currentSpeedKmPerHour=="+currentSpeedKmPerHour);
+            Log.e("sh_test","DCGetInfoValueCommand=====currentRPM=="+Integer.valueOf(currentRPM));
+
             map.put("watt", Integer.valueOf(watt));
             map.put("currentSpeedKmPerHour", Float.valueOf(currentSpeedKmPerHour));
             map.put("currentRPM", Integer.valueOf(currentRPM));
@@ -138,6 +142,9 @@ public class DCGetInfoValueCommand extends DCCommand {
             map.put("currentSessionCumulativeKM", Float.valueOf(currentSessionCumulativeKM));
             map.put("torqueResistanceLevel", Integer.valueOf(torqueResistanceLevel));
             map.put("errorNumber", Integer.valueOf(errorNumber));
+
+            Log.e("sh_test","DCGetInfoValueCommand=====tapOnEquipment---=="+Integer.valueOf(tapOnEquipment));
+
             map.put("tapOnEquipment", Integer.valueOf(tapOnEquipment));
             map.put("analogHeartRate", Integer.valueOf(analogHeartRate));
             map.put("currentSessionAverageSpeed", Float.valueOf(currentSessionAverageSpeed));

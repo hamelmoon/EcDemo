@@ -4,8 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#c3c3c3"
-    android:orientation="horizontal"
-    >
+    android:orientation="horizontal">
 
     <LinearLayout
         android:layout_margin="20dp"
@@ -13,94 +12,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-   <LinearLayout
-       android:padding="10dp"
-       android:orientation="vertical"
-       android:gravity="center"
-       android:layout_weight="1"
-       android:layout_width="match_parent"
-       android:layout_height="wrap_content">
-       <TextView
-           android:padding="5dp"
-           android:layout_weight="1"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:text="时间"
-           />
-
-       <TextView
-           android:padding="5dp"
-           android:layout_weight="1"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:layout_gravity="bottom"
-           android:text="速度"
-           />
-       <TextView
-           android:padding="5dp"
-           android:layout_weight="1"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:layout_gravity="bottom"
-           android:text="距离"
-           />
-       <TextView
-           android:padding="5dp"
-           android:layout_weight="1"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:layout_gravity="bottom"
-           android:text="卡路里"
-           />
-       <TextView
-           android:padding="5dp"
-           android:layout_weight="1"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:layout_gravity="bottom"
-           android:text="坡度"
-           />
-
-       <TextView
-           android:padding="5dp"
-           android:layout_weight="1"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:text="平均速度"
-           />
-
-       <TextView
-           android:padding="5dp"
-           android:layout_weight="1"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:layout_gravity="bottom"
-           android:text="最大心率"
-           />
-
-       <TextView
-           android:padding="5dp"
-           android:layout_weight="1"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:layout_gravity="bottom"
-           android:text="配速"
-           />
-       <TextView
-           android:padding="5dp"
-           android:layout_weight="1"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:layout_gravity="bottom"
-           android:text="平均心率"
-           />
-
-
-
-
-
-
-   </LinearLayout>
         <LinearLayout
             android:padding="10dp"
             android:orientation="vertical"
@@ -108,14 +19,116 @@
             android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
+            <TextView
+                android:padding="5dp"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="时间" />
+
+            <TextView
+                android:padding="5dp"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:text="速度" />
+
+            <TextView
+                android:padding="5dp"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:text="距离" />
+
+            <TextView
+                android:padding="5dp"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:text="卡路里" />
+
+            <TextView
+                android:padding="5dp"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:text="坡度" />
+
+            <TextView
+                android:padding="5dp"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="平均速度" />
+
+            <TextView
+                android:padding="5dp"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:text="最大心率" />
+
+            <TextView
+                android:padding="5dp"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:text="配速" />
+
+            <TextView
+                android:padding="5dp"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:text="平均心率" />
+            <TextView
+                android:padding="5dp"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:text="瓦特"
+               />
+            <TextView
+                android:padding="5dp"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:text="阻力" />
+            <TextView
+                android:padding="5dp"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:text="RPM" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:padding="10dp"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
             <TextView
                 android:padding="5dp"
                 android:layout_weight="1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="时间"
-                android:id="@+id/time"
-                />
+                android:id="@+id/time" />
 
             <TextView
                 android:id="@+id/speed"
@@ -125,6 +138,7 @@
                 android:layout_weight="1"
                 android:padding="5dp"
                 android:text="速度" />
+
             <TextView
                 android:id="@+id/dis"
                 android:padding="5dp"
@@ -132,8 +146,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
-                android:text="距离"
-                />
+                android:text="距离" />
 
             <TextView
                 android:padding="5dp"
@@ -142,8 +155,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:text="卡路里"
-                android:id="@+id/calorie"
-                />
+                android:id="@+id/calorie" />
+
             <TextView
                 android:padding="5dp"
                 android:layout_weight="1"
@@ -151,8 +164,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:text="坡度"
-                android:id="@+id/incline"
-                />
+                android:id="@+id/incline" />
 
             <TextView
                 android:padding="5dp"
@@ -160,8 +172,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="平均速度"
-                android:id="@+id/avg_speed"
-                />
+                android:id="@+id/avg_speed" />
 
             <TextView
                 android:padding="5dp"
@@ -170,8 +181,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:text="最大心率"
-                android:id="@+id/max_heart"
-                />
+                android:id="@+id/max_heart" />
 
             <TextView
                 android:padding="5dp"
@@ -180,8 +190,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:text="配速"
-                android:id="@+id/matching_speed"
-                />
+                android:id="@+id/matching_speed" />
+
             <TextView
                 android:padding="5dp"
                 android:layout_weight="1"
@@ -189,14 +199,36 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:text="平均心率"
-                android:id="@+id/avg_heart"
+                android:id="@+id/avg_heart" />
+
+            <TextView
+                android:padding="5dp"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:text="瓦特"
+                android:id="@+id/watt" />
+
+            <TextView
+                android:padding="5dp"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:text="阻力"
+                android:id="@+id/resistance" />
+
+            <TextView
+                android:padding="5dp"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:text="阻力"
+                android:id="@+id/rpm"
+
                 />
-
-
-
-
-
-
         </LinearLayout>
 
     </LinearLayout>
@@ -208,16 +240,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_margin="10dp"
-        >
+        android:layout_margin="10dp">
 
         <Button
             android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="开始"
-            android:id="@+id/start_button"
-            />
+            android:text="重新开始"
+            android:id="@+id/start_button" />
 
         <Button
             android:layout_weight="1"
@@ -225,8 +255,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:text="暂停"
-            android:id="@+id/pause_button"
-            />
+            android:id="@+id/pause_button" />
 
         <Button
             android:layout_weight="1"
@@ -234,15 +263,33 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:text="结束"
-            android:id="@+id/stop_button"
-            />
+            android:id="@+id/stop_button" />
+
+
+
+
     </LinearLayout>
+<!--
+    <FrameLayout
+        android:id="@+id/running_layout_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+-->
 
+    <FrameLayout
+        android:id="@+id/running_layout_container"
+        android:visibility="gone"
+        android:background="#c2c1c1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
+        <ImageView
+            android:id="@+id/mCountdownImageView"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center"
+            android:src="@mipmap/daojishi_3_img" />
 
+    </FrameLayout>
 
-<FrameLayout
-    android:id="@+id/running_layout_container"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"/>
 </RelativeLayout>
